@@ -244,3 +244,4 @@ for response in response_stream:
 ## Compatibility
 
 Anything not recognized by worker-sglang is forwarded verbatim to `/generate`, so advanced options in the SGLang docs (logprobs, sessions, images, etc.) also work.
+[![Runpod](https://api.runpod.io/badge/danchurko/worker-sglang)](https://console.runpod.io/hub/danchurko/worker-sglang)
