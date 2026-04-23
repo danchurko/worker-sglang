@@ -6,6 +6,9 @@ RUN curl -Ls https://astral.sh/uv/install.sh | sh \
     && ln -sf /root/.local/bin/uv /usr/local/bin/uv
 ENV PATH="/root/.local/bin:${PATH}"
 
+# Remove PEP-668 externally-managed marker so uv can install into system Python
+RUN rm -f /usr/lib/python*/EXTERNALLY-MANAGED /usr/lib/python*/externally-managed
+
 # Set working directory to the one already used by the base image
 WORKDIR /sgl-workspace
 
