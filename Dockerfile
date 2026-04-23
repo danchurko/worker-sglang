@@ -1,4 +1,7 @@
-ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:v0.5.2-cu126
+# Base image: use v0.4.7.post1-cu124 for Runpod Hub template-test compatibility (older GPU drivers).
+# For production endpoints with newer drivers, override SGLANG_BASE_IMAGE at build time
+# to lmsysorg/sglang:v0.5.2-cu126 or newer.
+ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:v0.4.7.post1-cu124
 FROM ${SGLANG_BASE_IMAGE}
 
 # Install uv package manager
