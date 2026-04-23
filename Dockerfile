@@ -1,4 +1,4 @@
-ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:latest
+ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:v0.5.2-cu126
 FROM ${SGLANG_BASE_IMAGE}
 
 # Install uv package manager
