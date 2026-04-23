@@ -1,4 +1,5 @@
-FROM lmsysorg/sglang:v0.5.2-cu126
+ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:latest
+FROM ${SGLANG_BASE_IMAGE}
 
 # Install uv package manager
 RUN curl -Ls https://astral.sh/uv/install.sh | sh \
@@ -7,6 +8,12 @@ ENV PATH="/root/.local/bin:${PATH}"
 
 # Set working directory to the one already used by the base image
 WORKDIR /sgl-workspace
+
+# Optional transformers override for newer model architectures (e.g. qwen3_5_moe)
+ARG TRANSFORMERS_SPEC=""
+RUN if [ -n "${TRANSFORMERS_SPEC}" ]; then \
+        uv pip install --system "${TRANSFORMERS_SPEC}"; \
+    fi
 
 # install dependencies
 COPY requirements.txt ./
@@ -33,7 +40,7 @@ ENV MODEL_NAME=$MODEL_NAME \
     QUANTIZATION=$QUANTIZATION \
     HF_DATASETS_CACHE="${BASE_PATH}/huggingface-cache/datasets" \
     HUGGINGFACE_HUB_CACHE="${BASE_PATH}/huggingface-cache/hub" \
-    HF_HOME="${BASE_PATH}/huggingface-cache/hub" \
+    HF_HOME="${BASE_PATH}/huggingface-cache" \
     HF_HUB_ENABLE_HF_TRANSFER=1
 
 # Model download script execution

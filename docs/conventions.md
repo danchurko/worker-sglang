@@ -78,4 +78,4 @@ chore(deps): update requirements.txt
 - Tool/function calling and reasoning:
   - `TOOL_CALL_PARSER`: required to enable tool/function calling; no runtime default is applied. If unset, `--tool-call-parser` is not passed to SGLang.
   - `REASONING_PARSER`: required to enable reasoning trace parsing; no runtime default is applied. If unset, `--reasoning-parser` is not passed to SGLang.
-  - Choose a parser matching the model family (e.g., `llama3`, `llama4`, `mistral`, `qwen25`, `deepseekv3`).
+  - Choose a parser matching the model family (e.g., `llama3`, `llama4`, `mistral`, `qwen25`, `deepseekv3`, `qwen3_coder`, `gpt-oss`, `kimi_k2`).
