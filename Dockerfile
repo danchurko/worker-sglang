@@ -6,12 +6,13 @@ ARG CUDA_BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 FROM ${CUDA_BASE_IMAGE}
 
 # Install Python 3.12 from deadsnakes PPA (Ubuntu 22.04 ships Python 3.10)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     software-properties-common \
     curl \
     ca-certificates \
     && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get install -y --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3.12 \
     && rm -rf /var/lib/apt/lists/*
 
