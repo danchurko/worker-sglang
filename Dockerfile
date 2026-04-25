@@ -26,7 +26,7 @@ ENV PATH="/root/.local/bin:${PATH}"
 
 # Install sglang >= 0.5.10 (required for Qwen3.6-35B-A3B support).
 # Ships pre-built wheels for CUDA 12.4 (flashinfer, flash-attn, etc.).
-RUN uv pip install --system "sglang[all]>=0.5.10"
+RUN uv pip install --system --prerelease=allow "sglang[all]>=0.5.10"
 
 # Set working directory to the one already used by the base image
 WORKDIR /sgl-workspace
