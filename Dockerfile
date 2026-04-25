@@ -42,7 +42,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     && cd /tmp/sglang/sgl-kernel \
     && TORCH_CUDA_ARCH_LIST="8.9" \
        CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)" \
-       CMAKE_ARGS="-DSGL_KERNEL_COMPILE_THREADS=32" \
+       CMAKE_ARGS="-DSGL_KERNEL_COMPILE_THREADS=32 -DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
        uv pip install --system --no-build-isolation --force-reinstall . \
     && rm -rf /tmp/sglang
 
