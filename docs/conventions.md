@@ -71,9 +71,16 @@ chore(deps): update requirements.txt
 
 - CUDA policy:
 
-  - Minimum supported CUDA is 12.6.
-  - Base images must match this (e.g., `lmsysorg/sglang:vX.Y.Z-cu126`).
-  - Keep `allowedCudaVersions` in `hub.json` at 12.6 or higher.
+  - Minimum supported CUDA is 13.0 (required by sglang >= 0.5.10 for Qwen3.6 support).
+  - Base image: `lmsysorg/sglang:v0.5.10.post1-cu130` — the only CUDA variant available
+    at the required sglang version.
+  - Two-tier GPU strategy:
+    - **Test tier**: `ADA_24` (RTX 4090) + small model (`HuggingFaceTB/SmolLM2-1.7B-Instruct`)
+      — validates basic worker functionality in Hub pre-release tests.
+    - **Production tier**: `AMPERE_80` (A100 80GB) + large model (`Qwen/Qwen3.6-35B-A3B`)
+      — actual inference deployment. Same image, different env vars.
+  - If CUDA 13.0 is incompatible with Hub test drivers, fall back to building a custom
+    base image with sglang >= 0.5.10 compiled against CUDA 12.4/12.6.
 
 - Tool/function calling and reasoning:
   - `TOOL_CALL_PARSER`: required to enable tool/function calling; no runtime default is applied. If unset, `--tool-call-parser` is not passed to SGLang.

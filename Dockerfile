@@ -1,7 +1,7 @@
-# Base image: use v0.4.7.post1-cu124 for Runpod Hub template-test compatibility (older GPU drivers).
-# For production endpoints with newer drivers, override SGLANG_BASE_IMAGE at build time
-# to lmsysorg/sglang:v0.5.2-cu126 or newer.
-ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:v0.4.7.post1-cu124
+# Base image: v0.5.10.post1-cu130 is required for Qwen3.6-35B-A3B support (sglang >= 0.5.10).
+# CUDA 13.0 requires modern host drivers — if Hub tests fail on older test VMs, fall back to
+# building a custom base image with sglang >= 0.5.10 compiled against CUDA 12.4/12.6.
+ARG SGLANG_BASE_IMAGE=lmsysorg/sglang:v0.5.10.post1-cu130
 FROM ${SGLANG_BASE_IMAGE}
 
 # Install uv package manager
