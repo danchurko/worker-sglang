@@ -2,7 +2,7 @@
 # Runpod Hub test VMs (RTX 4090) support CUDA 12.4 but reject CUDA 13.0 containers
 # due to nvidia-container-cli OCI prestart hook checking container CUDA libs vs host driver.
 # sglang >= 0.5.10 is installed from pip (required for Qwen3.6-35B-A3B support).
-ARG CUDA_BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+ARG CUDA_BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
 FROM ${CUDA_BASE_IMAGE}
 
 # Install Python 3.12 from deadsnakes PPA (Ubuntu 22.04 ships Python 3.10)
@@ -11,9 +11,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     software-properties-common \
     curl \
     ca-certificates \
+    git \
     && add-apt-repository ppa:deadsnakes/ppa -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3.12 \
+    python3.12-dev \
+    build-essential \
+    libnuma-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Make python3 point to Python 3.12 (overrides Ubuntu 22.04 system python3.10)
@@ -27,6 +31,20 @@ ENV PATH="/root/.local/bin:${PATH}"
 # Install sglang >= 0.5.10 (required for Qwen3.6-35B-A3B support).
 # Ships pre-built wheels for CUDA 12.4 (flashinfer, flash-attn, etc.).
 RUN uv pip install --system --prerelease=allow "sglang[all]>=0.5.10"
+
+# Build sglang-kernel from source to include sm89 (Ada/RTX 4090) CUDA kernel support.
+# Pre-built PyPI wheel only ships sm90 (Hopper) and sm100 (Blackwell) kernels.
+# Build from the sglang repo main branch which has the full source.
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=cache,target=/root/.cache/pip \
+    uv pip install --system 'scikit-build-core>=0.10' 'cmake>=3.31' \
+    && git clone --depth 1 --branch main https://github.com/sgl-project/sglang.git /tmp/sglang \
+    && cd /tmp/sglang/sgl-kernel \
+    && TORCH_CUDA_ARCH_LIST="8.9" \
+       CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)" \
+       CMAKE_ARGS="-DSGL_KERNEL_COMPILE_THREADS=32" \
+       uv pip install --system --no-build-isolation --force-reinstall . \
+    && rm -rf /tmp/sglang
 
 # Set working directory to the one already used by the base image
 WORKDIR /sgl-workspace
