@@ -71,16 +71,18 @@ chore(deps): update requirements.txt
 
 - CUDA policy:
 
-  - Minimum supported CUDA is 13.0 (required by sglang >= 0.5.10 for Qwen3.6 support).
-  - Base image: `lmsysorg/sglang:v0.5.10.post1-cu130` — the only CUDA variant available
-    at the required sglang version.
+  - **Custom base image**: `nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04` with
+    sglang >= 0.5.10 installed from pip.
+  - CUDA 12.4 is required because Runpod Hub test VMs (RTX 4090) have NVIDIA drivers
+    that only support up to CUDA 12.4. The upstream `lmsysorg/sglang` image for
+    sglang >= 0.5.10 only ships with CUDA 13.0, which is rejected by
+    `nvidia-container-cli` on these VMs.
+  - Python 3.12 is installed from the deadsnakes PPA (Ubuntu 22.04 ships Python 3.10).
   - Two-tier GPU strategy:
     - **Test tier**: `ADA_24` (RTX 4090) + small model (`HuggingFaceTB/SmolLM2-1.7B-Instruct`)
       — validates basic worker functionality in Hub pre-release tests.
     - **Production tier**: `AMPERE_80` (A100 80GB) + large model (`Qwen/Qwen3.6-35B-A3B`)
       — actual inference deployment. Same image, different env vars.
-  - If CUDA 13.0 is incompatible with Hub test drivers, fall back to building a custom
-    base image with sglang >= 0.5.10 compiled against CUDA 12.4/12.6.
 
 - Tool/function calling and reasoning:
   - `TOOL_CALL_PARSER`: required to enable tool/function calling; no runtime default is applied. If unset, `--tool-call-parser` is not passed to SGLang.
